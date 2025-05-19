@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { SpinButton } from './SpinButton';
 
 export class Wheel extends PIXI.Container {
     private radius: number = 300;
@@ -16,6 +17,7 @@ export class Wheel extends PIXI.Container {
         0x607d8b,
     ];
     private PRIZES = [100, 200, 300, 400, 500, 600, 700];
+    private spinButton: SpinButton;
 
     constructor() {
         super();
@@ -23,8 +25,15 @@ export class Wheel extends PIXI.Container {
         this.radiansPerSector = (Math.PI * 2) / this.numberOfSectors;
         this.wheel = new PIXI.Container();
         this.sectorGraphic = new PIXI.Graphics();
-
+        this.spinButton = new SpinButton('Spin');
         this.drawWheel();
+
+        this.wheel.addChild(this.spinButton);
+        this.spinButton.on('click', this.handleSpin);
+    }
+
+    private handleSpin() {
+        console.log('handleSpin');
     }
 
     private createSectorText(sectionNumber: number): void {
@@ -64,5 +73,5 @@ export class Wheel extends PIXI.Container {
         this.wheel.position.set(400, 300)
         this.wheel.addChild(this.sectorGraphic);
         this.addChild(this.wheel);
-    }
+    }   
 }
