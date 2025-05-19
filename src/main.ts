@@ -1,17 +1,13 @@
-import * as PIXI from 'pixi.js';
-import { Game } from './Game';
+import PixiApp from './context/PixiContext';
+import { Wheel } from './ui/Wheel';
 
 async function init() {
-  const app = new PIXI.Application();
-
-  await app.init({
-    width: 800,
-    height: 600,
-    backgroundColor: 0x1e1e1e,
-  });
+  const pixiApp = await PixiApp.getInstance();
   
-  document.getElementById('game')?.appendChild(app.canvas);
-  new Game(app);
+  document.getElementById('game')?.appendChild(pixiApp.app.canvas);
+
+  const wheel = new Wheel();
+  pixiApp.addChild(wheel);
 }
 
 init().catch((err) => console.error('Pixi init failed:', err));
