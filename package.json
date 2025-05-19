@@ -5,11 +5,21 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "lint": "eslint src",
+    "format": "prettier --write ./src"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-import": "^2.31.0",
+    "prettier": "^3.5.3",
     "typescript": "~5.8.3",
     "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "gsap": "^3.13.0",
+    "pixi.js": "^8.9.2"
   }
 }
