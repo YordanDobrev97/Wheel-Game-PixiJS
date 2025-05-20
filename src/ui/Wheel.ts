@@ -25,9 +25,10 @@ export class Wheel extends PIXI.Container {
         this.radiansPerSector = (Math.PI * 2) / this.numberOfSectors;
         this.wheel = new PIXI.Container();
         this.sectorGraphic = new PIXI.Graphics();
-        this.spinButton = new SpinButton('Spin');
+        this.spinButton = new SpinButton();
         this.drawWheel();
 
+        this.spinButton.position.set(0, 0);
         this.wheel.addChild(this.spinButton);
         this.spinButton.on('click', this.handleSpin);
     }
@@ -62,16 +63,16 @@ export class Wheel extends PIXI.Container {
 
             this.sectorGraphic.fill({ color: this.COLORS[sector % this.COLORS.length], width: 2, alpha: 1 });
 
-            this.sectorGraphic.setFillStyle({ width: 2, color: 0xffffff, alpha: 1 })
+            this.sectorGraphic.setFillStyle({ color: 0xffffff, alpha: 1 })
             this.sectorGraphic.moveTo(0, 0);
-            this.sectorGraphic.arc(0, 0, this.radius, startingAngle, endingAngle);
+            this.sectorGraphic.arc(10, 0, this.radius, startingAngle, endingAngle);
             this.sectorGraphic.lineTo(0, 0);
-            this.sectorGraphic.position.set(100, 100);
+            this.sectorGraphic.position.set(0, 0);
             this.createSectorText(sector);
         }
 
         this.wheel.position.set(400, 300)
         this.wheel.addChild(this.sectorGraphic);
         this.addChild(this.wheel);
-    }   
+    } 
 }

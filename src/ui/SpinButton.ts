@@ -1,44 +1,30 @@
 import * as PIXI from 'pixi.js';
 
 export class SpinButton extends PIXI.Container {
-    private buttonGraphic: PIXI.Graphics;
-    private spinText: PIXI.Text;
-    private defaultColor: number = 0x3498db;
+    private buttonSprite: PIXI.Sprite;
 
-    constructor(label: string) {
+    constructor() {
         super();
 
-        this.buttonGraphic = new PIXI.Graphics();
-        this.drawButton(this.defaultColor);
+        const spinTexture = PIXI.Assets.get('spinButton');
+        this.buttonSprite = new PIXI.Sprite({ texture: spinTexture });
 
-        this.buttonGraphic.interactive = true;
-        this.buttonGraphic.cursor = 'pointer';
-        this.buttonGraphic.hitArea = new PIXI.Circle(0, 0, 80);
+        this.buttonSprite.anchor.set(0.5);
+        this.buttonSprite.eventMode = 'static';
+        this.buttonSprite.cursor = 'pointer';
+        this.buttonSprite.scale.set(0.5); // ако искаш по-малък бутон
 
-        this.spinText = new PIXI.Text({
-            style: {
-                fontFamily: 'Arial',
-                fontSize: 24,
-                fill: 0xffffff,
-                align: 'center',
-            }
-        });
-        this.spinText.text = label;
-        this.spinText.anchor.set(0.5);
+        // Кръгла hitArea спрямо текущата скала
+        const radius = (spinTexture.width * 0.5) / 2;
+        this.buttonSprite.hitArea = new PIXI.Circle(0, 0, radius);
 
-        this.addChild(this.buttonGraphic);
-        this.addChild(this.spinText);
-
+        this.addChild(this.buttonSprite);
         this.attachListeners();
     }
 
     private attachListeners() {
-        this.buttonGraphic.on('pointerdown', (event: PIXI.FederatedPointerEvent) => this.emit('click', event));
-    }
-
-    private drawButton(color: number): void {
-        this.buttonGraphic.clear();
-        this.buttonGraphic.fill({ color: color });
-        this.buttonGraphic.circle(0, 0, 80);
+        this.buttonSprite.on('pointerdown', (event: PIXI.FederatedPointerEvent) =>
+            this.emit('click', event)
+        );
     }
 }
