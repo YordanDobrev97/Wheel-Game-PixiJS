@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import PixiApp from './context/PixiContext';
-import { Wheel } from './ui/Wheel';
+import { GameManager } from './GameManager';
 
 async function init() {
   const pixiApp = await PixiApp.getInstance();
@@ -9,8 +9,8 @@ async function init() {
 
   await PIXI.Assets.load({ alias: 'spinButton', src: 'spin_button.png' });
 
-  const wheel = new Wheel();
-  pixiApp.addChild(wheel);
+  const gameManager = new GameManager();
+  pixiApp.addChild(gameManager);
 }
 
 init().catch((err) => console.error('Pixi init failed:', err));
