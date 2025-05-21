@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import gsap from 'gsap';
 import { SpinButton } from './SpinButton';
 
 export class Wheel extends PIXI.Container {
@@ -6,6 +7,7 @@ export class Wheel extends PIXI.Container {
     private numberOfSectors: number = 7;
     private radiansPerSector: number;
     private sectorGraphic: PIXI.Graphics;
+    private sectorContainer: PIXI.Container;
     private wheel: PIXI.Container;
     private COLORS = [
         0xffc107,
@@ -24,17 +26,52 @@ export class Wheel extends PIXI.Container {
 
         this.radiansPerSector = (Math.PI * 2) / this.numberOfSectors;
         this.wheel = new PIXI.Container();
+        this.sectorContainer = new PIXI.Container();
         this.sectorGraphic = new PIXI.Graphics();
         this.spinButton = new SpinButton();
         this.drawWheel();
 
         this.spinButton.position.set(0, 0);
         this.wheel.addChild(this.spinButton);
+
         this.spinButton.on('click', this.handleSpin);
     }
 
-    private handleSpin() {
-        console.log('handleSpin');
+    handleSpin = () => {
+        const fullRotations = 3 + Math.floor(Math.random() * 3);
+        const targetSectorIndex = Math.floor(Math.random() * this.numberOfSectors);
+        const degreesPerSector = 360 / this.numberOfSectors;
+        const targetAngle = targetSectorIndex * degreesPerSector + degreesPerSector / 2;
+        const totalDeg = fullRotations * 360 + targetAngle;
+        const totalRad = totalDeg * (Math.PI / 180);
+
+        const currentRotation = this.sectorContainer.rotation;
+        const targetRotation = currentRotation + totalRad;
+
+        gsap.fromTo(this.sectorContainer,
+            { rotation: currentRotation },
+            {
+                rotation: targetRotation,
+                duration: 4,
+                ease: "power3.out",
+                onStart: () => {
+                    this.spinButton.disableInteraction();
+                },
+                onComplete: () => this.onSpinComplete(targetRotation),
+            }
+        );
+    }
+
+    private onSpinComplete = (finalRotation: number) => {
+        const normalizedRotation = (finalRotation % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+        const corrected = (Math.PI * 2 - normalizedRotation) % (Math.PI * 2);
+
+        const selectedIndex = Math.floor(corrected / this.radiansPerSector) % this.numberOfSectors;
+        const prize = this.PRIZES[selectedIndex - 1];
+
+        console.log(`selected index ${selectedIndex}, prize: ${prize}`);
+
+        this.spinButton.enableInteraction();
     }
 
     private createSectorText(sectionNumber: number): void {
@@ -72,7 +109,8 @@ export class Wheel extends PIXI.Container {
         }
 
         this.wheel.position.set(400, 300)
-        this.wheel.addChild(this.sectorGraphic);
+        this.sectorContainer.addChild(this.sectorGraphic);
+        this.wheel.addChild(this.sectorContainer);
         this.addChild(this.wheel);
-    } 
+    }
 }

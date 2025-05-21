@@ -12,14 +12,21 @@ export class SpinButton extends PIXI.Container {
         this.buttonSprite.anchor.set(0.5);
         this.buttonSprite.eventMode = 'static';
         this.buttonSprite.cursor = 'pointer';
-        this.buttonSprite.scale.set(0.5); // ако искаш по-малък бутон
+        this.buttonSprite.scale.set(0.5);
 
-        // Кръгла hitArea спрямо текущата скала
         const radius = (spinTexture.width * 0.5) / 2;
         this.buttonSprite.hitArea = new PIXI.Circle(0, 0, radius);
 
         this.addChild(this.buttonSprite);
         this.attachListeners();
+    }
+
+    public disableInteraction() {
+        this.buttonSprite.eventMode = 'none';
+    }
+
+    public enableInteraction() {
+        this.buttonSprite.eventMode = 'static';
     }
 
     private attachListeners() {
