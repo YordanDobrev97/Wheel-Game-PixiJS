@@ -95,5 +95,6 @@ export class Wheel extends PIXI.Container {
         const prize = this.PRIZES[selectedIndex];
 
         console.log(`selected index ${selectedIndex}, prize: ${prize}`);
+        this.emit('spinComplete', { index: selectedIndex, prize });
     }
 }
