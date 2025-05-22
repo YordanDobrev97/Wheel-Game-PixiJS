@@ -1,21 +1,23 @@
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap';
 
+import { WheelConfig } from '../configs/WheelConfig';
+
 export class Wheel extends PIXI.Container {
-    private radius = 300;
-    private numberOfSectors = 7;
-    private radiansPerSector: number;
-    private sectorContainer: PIXI.Container;
+    private readonly radius = WheelConfig.RADIUS;
+    private readonly numberOfSectors = WheelConfig.NUMBERS_OF_SECTORS;
+    private readonly COLORS = WheelConfig.COLORS;
+    private readonly PRIZES = WheelConfig.PRIZES;
+
     private wheel: PIXI.Container;
-    private COLORS = [
-        0xffc107, 0x03a9f4, 0x4caf50,
-        0xf44336, 0x9c27b0, 0xff5722, 0x607d8b,
-    ];
-    private PRIZES = [100, 200, 300, 400, 500, 600, 700];
+    private sectorContainer: PIXI.Container;
+    
+    private resultText: PIXI.Text;
+
+    private radiansPerSector: number;
     private sectorGraphics: PIXI.Graphics[] = [];
     private winningGraphic: PIXI.Graphics | null = null;
     private winningTween: gsap.core.Timeline | null = null;
-    private resultText: PIXI.Text;
 
     constructor() {
         super();
@@ -76,6 +78,24 @@ export class Wheel extends PIXI.Container {
         const posY = textRadius * Math.sin(rotation);
 
         prizeText.position.set(posX, posY);
+
+        const sectorNumberText = new PIXI.Text({
+            text: `${sectionNumber + 1}`,
+            style: {
+                fill: 0xffff00,
+                fontSize: 20,
+                fontWeight: 'bold',
+            }
+        });
+        sectorNumberText.anchor.set(0.5);
+
+        const numberRadius = this.radius * 0.5;
+        const numPosX = numberRadius * Math.cos(rotation);
+        const numPosY = numberRadius * Math.sin(rotation);
+
+        sectorNumberText.position.set(numPosX, numPosY);
+        this.sectorGraphics[sectionNumber].addChild(sectorNumberText);
+
         this.sectorGraphics[sectionNumber].addChild(prizeText);
     }
 
@@ -92,9 +112,11 @@ export class Wheel extends PIXI.Container {
         const currentRotation = this.sectorContainer.rotation;
         const targetRotation = currentRotation + totalRad;
 
+        const randomDuration = 3.5 + Math.random() * 1.5;
+
         gsap.to(this.sectorContainer, {
             rotation: targetRotation,
-            duration: 4,
+            duration: randomDuration,
             ease: "power3.out",
             onComplete: () => {
                 this.onSpinComplete(targetRotation);
@@ -123,8 +145,8 @@ export class Wheel extends PIXI.Container {
         const selectedIndex = Math.floor(corrected / this.radiansPerSector) % this.numberOfSectors;
         const prize = this.PRIZES[selectedIndex];
 
-        this.resultText.text = `Winning sector: ${selectedIndex} with prize ${prize}`;
-        this.emit('spinComplete', { index: selectedIndex, prize });
+        this.resultText.text = `Winning sector: ${selectedIndex + 1} with prize ${prize}`;
+        this.emit('spinComplete', { index: selectedIndex + 1, prize });
         this.animateWinningSector(selectedIndex);
     }
 
@@ -141,7 +163,7 @@ export class Wheel extends PIXI.Container {
         this.winningGraphic = winningSector;
         for (const color of colors) {
             tl.to(this.winningGraphic, {
-                duration: 0.8,
+                duration: 0.1,
                 onUpdate: () => {
                     if (this.winningGraphic) {
                         this.winningGraphic.tint = color;
