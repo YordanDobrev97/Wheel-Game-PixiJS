@@ -23,10 +23,12 @@ export class SpinButton extends PIXI.Container {
 
     public disableInteraction() {
         this.buttonSprite.eventMode = 'none';
+        this.buttonSprite.alpha = 0.5;
     }
 
     public enableInteraction() {
         this.buttonSprite.eventMode = 'static';
+        this.buttonSprite.alpha = 1;
     }
 
     private attachListeners() {
